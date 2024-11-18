@@ -23,7 +23,6 @@ public class Block
         this.type = type;
 
         vertices = BlockData.vertices.Plus(position);
-        
         neighbors = new Block[6];
     }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class MeshData
@@ -43,28 +42,29 @@ public class MeshData
         mesh.RecalculateNormals();
     }
 
-    public void UpdateMesh(Dictionary<Vector3,Block> blocks)
+    public void UpdateMesh(Dictionary<Vector3, Block> blocks)
     {
-        int index = 0;
-
         foreach ( Block block in blocks.Values )
         {
-
             for ( int i = 0; i < 6; i++ )
             {
-                for ( int j = 0; j < 6; j++ )
+                if ( block.neighbors[i] == null ) // Need to render this side
                 {
-                    if ( block.neighbors[i] == null )
+                    for ( int j = 0; j < 4; j++ )
                     {
-                        triangles.Add(vertices.Count);
-
-                        index = BlockData.triangles[i, j];
-                        vertices.Add(block.vertices[index]);
-
+                        // Add relevant side's verteces
+                        vertices.Add(block.vertices[BlockData.sideVertices[i, j]]);
                         uvs.Add(BlockData.uvs[j]);
+                    } 
+
+                    int vertCount = vertices.Count;
+                    foreach ( int index in BlockData.trianglesTemplate )
+                    {
+                        // Connect side into triangles;
+                        triangles.Add(vertCount + index - 4); // use (-4) to reference the last 4 verteces added
                     }
                 }
-            }    
+            }
         }
 
         GenerateMesh();
