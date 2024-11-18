@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public float jumpSpeed;
     public float rotationSpeed;
     public float maxSpeed;
+    public bool spawnOnLoad;
 
     new public Rigidbody rigidbody;
 

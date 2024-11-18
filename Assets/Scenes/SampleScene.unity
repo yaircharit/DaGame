@@ -246,9 +246,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fcea0b2fcb61f840807f1e43e7cc6ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkLength: 10
+  chunkLength: 1
   maxHeight: 10
-  seaLevel: 2
+  seaLevel: 1
   playerPrefab: {fileID: 1233047537401921812, guid: ef455961feb6e3a4f82d85c3600efb4a, type: 3}
   chunkPrefab: {fileID: 782089513168095499, guid: 459169e719e8b0443b3528489f4b7838, type: 3}
 --- !u!4 &845273674

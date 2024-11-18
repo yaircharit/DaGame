@@ -30,7 +30,7 @@ public static class MyExtensions
         return res;
     }
 
-    public static Vector3 Add(this Vector3 obj, int x)
+    public static Vector3 Plus(this Vector3 obj, int x)
     {
         return new Vector3(obj.x + x, obj.y + x, obj.z + x);
     }
@@ -39,7 +39,7 @@ public static class MyExtensions
         return new Vector3(obj.x + x, obj.y + x, obj.z + x);
     }
 
-    public static int[,] Add(this int[,] a, Vector3 b)
+    public static int[,] Plus(this int[,] a, Vector3 b)
     {
         int[,] res = new int[a.GetLength(0),a.GetLength(1)];
 

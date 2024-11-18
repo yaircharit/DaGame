@@ -165,6 +165,7 @@ MonoBehaviour:
   jumpSpeed: 10
   rotationSpeed: 20
   maxSpeed: 30
+  spawnOnLoad: 1
   rigidbody: {fileID: 1233047537401921818}
 --- !u!1 &1233047537597560167
 GameObject:

@@ -27,7 +27,9 @@ public class WorldGenerator : MonoBehaviour
         chunks = new Dictionary<Vector2, Chunk>();
         
         chunks.Add(Vector2.zero, Instantiate(chunkPrefab).GetComponent<Chunk>());
-        SpawnPlayer();
+
+        if (playerPrefab.GetComponent<Player>().spawnOnLoad)
+            SpawnPlayer();
     }
 
     public void Update()

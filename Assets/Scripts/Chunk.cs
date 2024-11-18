@@ -52,7 +52,7 @@ public class Chunk : MonoBehaviour
                 for ( int k = 0; k < seaLevel; k++ ) // Fill all blocks up to seaLevel
                 {
                     currBlockPos.Set(i, k, j);
-                    blocks.Add(currBlockPos, new Block(this, currBlockPos));
+                    blocks.Add(currBlockPos, new Block(currBlockPos));
                 }
             }
         }
