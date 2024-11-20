@@ -3,15 +3,14 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
-    public static WorldGenerator currentWorld; // To have access to every block from anywhere
+    public static WorldGenerator current; // To have access to every block from anywhere
 
     [Header("Chunk Properties")]
     public int chunkLength;
     public int maxHeight;
-    public int seaLevel;
-
     // maps
     public Dictionary<Vector2, Chunk> chunks;
+    public float noiseScale;    // Effects terrain smoothness
     private float[,] heightMap;
 
     [Header("Prefabs")]
@@ -22,11 +21,11 @@ public class WorldGenerator : MonoBehaviour
 
     public void Start()
     {
-        currentWorld = this;
+        current = this;
         
         chunks = new Dictionary<Vector2, Chunk>();
         
-        chunks.Add(Vector2.zero, Instantiate(chunkPrefab).GetComponent<Chunk>());
+        chunks.Add(Vector2.zero, Instantiate(chunkPrefab).GetComponent<Chunk>()); // Add first chunk
 
         if (playerPrefab.GetComponent<Player>().spawnOnLoad)
             SpawnPlayer();
@@ -75,5 +74,10 @@ public class WorldGenerator : MonoBehaviour
         // TODO: Kill player if needed?
 
         player = Instantiate(playerPrefab, spawnPos.Add(0.5f),new Quaternion()).GetComponent<Player>();
+    }
+
+    public static float GenerateHeight(Vector2 position)
+    {
+        return Noise.GenerateNoise(Vector2.one,current.chunkLength,position,current.noiseScale);
     }
 }

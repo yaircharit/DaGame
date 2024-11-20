@@ -34,7 +34,6 @@ public class MeshData
         mesh.triangles = triangles.ToArray();
         mesh.uv = uvs.ToArray();
 
-        //TODO: Clear local variables after storing in mesh
         vertices.Clear();
         triangles.Clear();
         uvs.Clear();

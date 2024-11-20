@@ -19,6 +19,16 @@ public class Block
     // Functions
     public Block(Vector3 position, BlockType type = BlockType.Grass)
     {
+        Init(position, type);
+    }
+
+    public Block(float x, float y, float z, BlockType type = BlockType.Grass)
+    {
+        Init(new Vector3(x,y,z),type);
+    }
+
+    public void Init(Vector3 position, BlockType type = BlockType.Grass)
+    {
         this.position = position;
         this.type = type;
 
@@ -32,7 +42,7 @@ public class Block
         for ( int i = 0; i < BlockData.neighbors.Length; i++ ) // 6 neighbors
         {
             tempPos = position + BlockData.neighbors[i];
-            neighbors[i] = WorldGenerator.currentWorld.GetBlock(tempPos);
+            neighbors[i] = WorldGenerator.current.GetBlock(tempPos);
         }
     }
 }
