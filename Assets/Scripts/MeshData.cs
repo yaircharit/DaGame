@@ -43,24 +43,36 @@ public class MeshData
 
     public void UpdateMesh(Dictionary<Vector3, Block> blocks)
     {
+        int[] currVerts = new int[4];
+        int temp;
+
         foreach ( Block block in blocks.Values )
         {
-            for ( int i = 0; i < 6; i++ )
+            for ( int i = 0; i < 6; i++ ) // Each side
             {
                 if ( block.neighbors[i] == null ) // Need to render this side
                 {
-                    for ( int j = 0; j < 4; j++ )
+                    for ( int j = 0; j < 4; j++ ) // Each vertex of this side
                     {
-                        // Add relevant side's verteces
-                        vertices.Add(block.vertices[BlockData.sideVertices[i, j]]);
-                        uvs.Add(BlockData.uvs[j]);
-                    } 
+                        temp = vertices.FindIndex(block.vertices[BlockData.sideVertices[i, j]].Equals); // Search for current vertex
+                        if ( temp == -1 )
+                        {
+                            // Add relevant side's verteces
+                            currVerts[j] = vertices.Count;
+                            vertices.Add(block.vertices[BlockData.sideVertices[i, j]]);
+                            uvs.Add(BlockData.uvs[j]); // Add texture data
+                        } else
+                        {
+                            // Reference existing vertex for triangles loop
+                            currVerts[j] = temp;
+                        }
+                    }
 
                     int vertCount = vertices.Count;
                     foreach ( int index in BlockData.trianglesTemplate )
                     {
                         // Connect side into triangles;
-                        triangles.Add(vertCount + index - 4); // use (-4) to reference the last 4 verteces added
+                        triangles.Add(currVerts[index]);
                     }
                 }
             }

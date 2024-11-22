@@ -36,7 +36,7 @@ public class Chunk : MonoBehaviour
 
 
         noiseScale = WorldGenerator.GenerateHeight(position);
-        Debug.Log("Chunk noise: " +noiseScale);
+        Debug.Log("Chunk noise: " + noiseScale);
 
         Generate();
         meshData.UpdateMesh(blocks);
@@ -68,14 +68,14 @@ public class Chunk : MonoBehaviour
 
     private int GenerateBlockHeight(Vector2 blockPos)
     {
-        var res = Noise.GenerateNoise(blockPos,noiseScale,position,maxHeight);
-        Debug.Log(res);
+        var res = Noise.GenerateNoise(blockPos, noiseScale, position, maxHeight);
+        //Debug.Log(res);
         return Mathf.FloorToInt(res);
     }
 
     private int GenerateBlockHeight(float x, float y)
     {
-        return GenerateBlockHeight(new Vector2(x,y));
+        return GenerateBlockHeight(new Vector2(x, y));
     }
 
     public void OnDrawGizmos()
