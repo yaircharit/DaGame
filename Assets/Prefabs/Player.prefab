@@ -162,10 +162,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
-  jumpSpeed: 10
+  jumpSpeed: 1
   rotationSpeed: 20
   maxSpeed: 30
   spawnOnLoad: 1
+  chunkLoadMargin: 0
+  currentChunk: {fileID: 0}
   rigidbody: {fileID: 1233047537401921818}
 --- !u!1 &1233047537597560167
 GameObject:

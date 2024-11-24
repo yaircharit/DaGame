@@ -48,13 +48,19 @@ public class Player : MonoBehaviour
     private bool Move()
     {
         // Get X and Z axis inputs
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal") * speed, 0, Input.GetAxis("Vertical") * speed);
-        if ( Input.GetKey(KeyCode.Space) )
+        Vector3 move = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
+
+        if ( Input.GetKey(KeyCode.Space) ) //TODO: check if grounded
         {
             // Get Y axis input (jump)
             move.y = jumpSpeed;
         }
-        rigidbody.velocity += move * Time.deltaTime; // Add velocity accordingly
+
+        if ( move != Vector3.zero )
+        {
+            rigidbody.velocity += move * speed * Time.deltaTime ;
+        }
+
 
         float rotation = Input.GetAxis("Rotation"); // Get camera/player rotation inputs
         transform.eulerAngles += new Vector3(0, rotation * rotationSpeed * Time.deltaTime, 0); // Rotate camera/player
