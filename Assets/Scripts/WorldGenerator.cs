@@ -29,7 +29,6 @@ public class WorldGenerator : MonoBehaviour
         chunks = new Dictionary<Vector2, Chunk>();
         loadedChunks = new List<Chunk>();
 
-        LoadNeighborhood(Vector2.zero);
         SpawnPlayer();
     }
 
@@ -44,6 +43,11 @@ public class WorldGenerator : MonoBehaviour
         foreach ( var chunk in toRemove ) 
         {
             chunk.ClearData();
+            Destroy(chunk.gameObject);
+            if ( !chunk.wasModified )
+            {
+                chunks.Remove(chunk.chunkPos);
+            }
         }
 
         var toAdd = toLoad.Where((c) => !loadedChunks.Contains(c));

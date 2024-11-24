@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -20,13 +18,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // TODO: Load chunks around player
-        currentChunk = WorldGenerator.current.GetChunk(position);
-        if ( currentChunk == null )
-        {
-            currentChunk = WorldGenerator.current.InstantiateChunk(position);
-            //currentChunk.LoadNeighborhood();
-        }
+
     }
 
     // Update is called once per frame
@@ -36,9 +28,13 @@ public class Player : MonoBehaviour
         {
             // Check if on the edge of a chunk
             Chunk tempChunk = WorldGenerator.current.GetChunk(position);
+            if ( tempChunk == null )
+            {
+                tempChunk = WorldGenerator.current.InstantiateChunk(position);
+            }
+
             if ( currentChunk != tempChunk )
             {
-                // TODO: load new chunks
                 WorldGenerator.current.LoadNeighborhood(tempChunk);
                 currentChunk = tempChunk;
             }
@@ -63,7 +59,7 @@ public class Player : MonoBehaviour
         float rotation = Input.GetAxis("Rotation"); // Get camera/player rotation inputs
         transform.eulerAngles += new Vector3(0, rotation * rotationSpeed * Time.deltaTime, 0); // Rotate camera/player
 
-        
+
 
         return rigidbody.velocity != Vector3.zero;
     }

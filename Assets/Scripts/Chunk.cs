@@ -8,20 +8,6 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class Chunk : MonoBehaviour
 {
-    public static class ChunkData
-    {
-        public static Vector2[] neighbors = {
-            new Vector2(-1,-1), //  -1, 1 ------- 0, 1 ------- 1, 1
-            new Vector2(-1, 0), //      |           |           |
-            new Vector2(-1, 1), //      |           |           |
-            new Vector2( 0, 1), //      |           |           |
-            new Vector2( 1, 1), //  -1, 0 ------- 0, 0 ------- 1, 0
-            new Vector2( 1, 0), //      |           |           |
-            new Vector2( 1,-1), //      |           |           |
-            new Vector2( 0,-1), //      |           |           |
-        };                      //  -1,-1 ------- 0,-1 ------- 1,-1
-
-    }
 
     // General Properties
     public int chunkLength => WorldGenerator.current.chunkLength;
@@ -37,8 +23,7 @@ public class Chunk : MonoBehaviour
 
     // Functional variables
     public Dictionary<Vector3, Block> blocks;
-    public Vector2[] neighbors;
-    private bool wasModified; //TODO: to know if save/load chunk or generate
+    public bool wasModified; //TODO: to know if save/load chunk or generate
 
     public void Start()
     {
@@ -52,11 +37,6 @@ public class Chunk : MonoBehaviour
         gameObject.transform.position = new Vector3(chunkPos.x*chunkLength,0,chunkPos.y*chunkLength);
         blocks = new Dictionary<Vector3, Block>();
         meshData = new MeshData(this);
-        neighbors = new Vector2[ChunkData.neighbors.Length];
-        for ( int i = 0; i < neighbors.Length; i++ )
-        {
-            neighbors[i] = ChunkData.neighbors[i] + chunkPos;
-        }
 
         noiseScale = WorldGenerator.GenerateHeight(chunkPos);
         Debug.Log("Chunk noise: " + noiseScale);

@@ -93,8 +93,8 @@ public class MeshData
     public void Clear()
     {
         mesh.Clear();
-        meshFilter.sharedMesh = mesh;
-        meshCollider.sharedMesh = mesh;
+        meshFilter.sharedMesh.Clear();
+        meshCollider.sharedMesh.Clear();
     }
 
     public void OnDrawGizmos()
