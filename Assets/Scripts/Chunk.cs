@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,40 +8,68 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class Chunk : MonoBehaviour
 {
+    public static class ChunkData
+    {
+        public static Vector2[] neighbors = {
+            new Vector2(-1,-1), //  -1, 1 ------- 0, 1 ------- 1, 1
+            new Vector2(-1, 0), //      |           |           |
+            new Vector2(-1, 1), //      |           |           |
+            new Vector2( 0, 1), //      |           |           |
+            new Vector2( 1, 1), //  -1, 0 ------- 0, 0 ------- 1, 0
+            new Vector2( 1, 0), //      |           |           |
+            new Vector2( 1,-1), //      |           |           |
+            new Vector2( 0,-1), //      |           |           |
+        };                      //  -1,-1 ------- 0,-1 ------- 1,-1
+
+    }
+
     // General Properties
     public int chunkLength => WorldGenerator.current.chunkLength;
     public int maxHeight => WorldGenerator.current.maxHeight;
 
     // Map Generation Variables
-    public float noiseScale; // TODO: generate from Noise.GenerateNoise(), have a height map influence the chunk's noise
-    private Vector2 position;
+    public float noiseScale; 
+    public Vector2 chunkPos;
 
     // Mesh variables
     MeshData meshData;
+    bool isLoaded;
 
     // Functional variables
     public Dictionary<Vector3, Block> blocks;
-    //private Chunk[] neighbors; //TODO: maybe
-    //private bool wasModified; //TODO: to know if save/load chunk or generate
+    public Vector2[] neighbors;
+    private bool wasModified; //TODO: to know if save/load chunk or generate
 
     public void Start()
     {
-        //if ( (int)offset.x % chunkLength != 0 || (int)offset.y % chunkLength != 0 )
-        //{
-        //    Debug.LogError("Unsupported chunk offset :" + offset.ToString());
-        //    return;
-        //}
-        position = Vector2.zero; //TODO: pass position somehow
+        
+    }
+
+    public void Init(Vector2 pos)
+    {
+        wasModified = false;
+        chunkPos = pos;
+        gameObject.transform.position = new Vector3(chunkPos.x*chunkLength,0,chunkPos.y*chunkLength);
         blocks = new Dictionary<Vector3, Block>();
         meshData = new MeshData(this);
+        neighbors = new Vector2[ChunkData.neighbors.Length];
+        for ( int i = 0; i < neighbors.Length; i++ )
+        {
+            neighbors[i] = ChunkData.neighbors[i] + chunkPos;
+        }
 
-
-        noiseScale = WorldGenerator.GenerateHeight(position);
+        noiseScale = WorldGenerator.GenerateHeight(chunkPos);
         Debug.Log("Chunk noise: " + noiseScale);
+    }
 
-        Generate();
+    public bool IsInChunk(Vector3 worldPosition)
+    {
+        return (worldPosition.x / chunkLength == chunkPos.x && worldPosition.y / chunkLength == chunkPos.y);
+    }
+
+    public void UpdateMesh()
+    {
         meshData.UpdateMesh(blocks);
-
     }
 
     public void Generate()
@@ -66,9 +95,24 @@ public class Chunk : MonoBehaviour
         }
     }
 
+    public void ClearData()
+    {
+        if ( !wasModified )
+        {
+            blocks.Clear();
+        }
+
+        meshData.Clear();
+    }
+
+    public void LoadNeighborhood()
+    {
+        WorldGenerator.current.LoadNeighborhood(chunkPos);
+    }
+
     private int GenerateBlockHeight(Vector2 blockPos)
     {
-        var res = Noise.GenerateNoise(blockPos, noiseScale, position, maxHeight);
+        var res = Noise.GenerateNoise(blockPos, noiseScale, chunkPos, maxHeight);
         //Debug.Log(res);
         return Mathf.FloorToInt(res);
     }

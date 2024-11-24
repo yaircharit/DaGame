@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
@@ -10,6 +12,7 @@ public class WorldGenerator : MonoBehaviour
     public int maxHeight;
     // maps
     public Dictionary<Vector2, Chunk> chunks;
+    public List<Chunk> loadedChunks;
     public float noiseScale;    // Effects terrain smoothness
     private float[,] heightMap;
 
@@ -24,11 +27,10 @@ public class WorldGenerator : MonoBehaviour
         current = this;
         
         chunks = new Dictionary<Vector2, Chunk>();
-        
-        chunks.Add(Vector2.zero, Instantiate(chunkPrefab).GetComponent<Chunk>()); // Add first chunk
+        loadedChunks = new List<Chunk>();
 
-        if (playerPrefab.GetComponent<Player>().spawnOnLoad)
-            SpawnPlayer();
+        LoadNeighborhood(Vector2.zero);
+        SpawnPlayer();
     }
 
     public void Update()
@@ -36,6 +38,70 @@ public class WorldGenerator : MonoBehaviour
         
     }
 
+    public void LoadChunks(List<Chunk> toLoad)
+    {
+        var toRemove = loadedChunks.Where((c) => !toLoad.Contains(c));
+        foreach ( var chunk in toRemove ) 
+        {
+            chunk.ClearData();
+        }
+
+        var toAdd = toLoad.Where((c) => !loadedChunks.Contains(c));
+        foreach ( var chunk in toAdd ) // TODO: chunk in toLoad which is not in loadedChunks
+        {
+            chunk.Generate();
+            chunk.UpdateMesh();
+        }
+
+        loadedChunks = toLoad;
+    }
+
+    public void LoadNeighborhood(Chunk tempChunk)
+    {
+        LoadNeighborhood(tempChunk.chunkPos);
+    }
+
+    public void LoadNeighborhood(Vector2 chunkPos, int distance = 1)
+    {
+        LoadChunks(GetNeighborhood(chunkPos, distance));
+    }
+
+    private List<Chunk> GetNeighborhood(Vector2 chunkPos, int distance = 1)
+    {
+        
+        List<Chunk> res = new List<Chunk>();
+        Chunk temp;
+        Vector2 temp2 = new Vector2();
+
+        for ( int i = -distance; i <= distance; i++ )
+        {
+            for ( int j = -distance; j <= distance; j++ )
+            {
+                temp2.x = chunkPos.x + i;
+                temp2.y = chunkPos.y + j;
+                temp = chunks.GetValueOrDefault(temp2);
+                if (temp == null )
+                {
+                    temp = InstantiateChunk(temp2); // Adds also to dict
+                }
+                res.Add(temp);
+            }
+        }
+
+        return res;
+    }
+    public Chunk InstantiateChunk(Vector3 worldPosition)
+    {
+        return InstantiateChunk(new Vector2((int)worldPosition.x/chunkLength, (int)worldPosition.z/chunkLength));
+    }
+
+    public Chunk InstantiateChunk(Vector2 chunkPosition)
+    {
+        Chunk res = Instantiate(chunkPrefab,transform).GetComponent<Chunk>(); // Create new Chunk
+        res.Init(chunkPosition);
+        chunks.Add(chunkPosition, res);
+        return res;
+    }
 
     /// <summary>
     /// Gets a chunk object that contains the block's position or null if does not exist
@@ -44,8 +110,7 @@ public class WorldGenerator : MonoBehaviour
     /// <returns>The chunk of this position</returns>
     public Chunk GetChunk(Vector3 position)
     {
-        Vector2 diff = new Vector2((int)position.x % chunkLength, (int)position.y % chunkLength);
-        Vector2 chunkPos = new Vector2((int)position.x - diff.x, (int)position.y - diff.y);
+        Vector2 chunkPos = new Vector2((int)position.x / chunkLength, (int)position.y / chunkLength);
         return chunks.GetValueOrDefault(chunkPos);
     }
 
